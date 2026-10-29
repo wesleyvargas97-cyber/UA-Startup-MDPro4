@@ -1,8 +1,8 @@
 -- U.A. Startup
--- Custom card script for MDPro4 / YGOPro-compatible ocgcore.
+-- Temporary diagnostic build for MDPro4: verifies that the activation operation
+-- runs and that the client can open a Deck selection window.
 local s,id=GetID()
 function s.initial_effect(c)
-    -- Activate: add 1 "U.A." monster from Deck to hand.
     local e1=Effect.CreateEffect(c)
     e1:SetDescription(aux.Stringid(id,0))
     e1:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
@@ -13,8 +13,6 @@ function s.initial_effect(c)
     e1:SetOperation(s.thop)
     c:RegisterEffect(e1)
 
-    -- If the opponent Special Summons, you may banish this card from the GY
-    -- as cost, then Special Summon 1 "U.A." monster from your GY.
     local e2=Effect.CreateEffect(c)
     e2:SetDescription(aux.Stringid(id,1))
     e2:SetCategory(CATEGORY_SPECIAL_SUMMON)
@@ -29,32 +27,19 @@ function s.initial_effect(c)
     c:RegisterEffect(e2)
 end
 
+-- DIAGNOSTIC ONLY: intentionally accepts any monster to isolate whether
+-- MDPro4 runs the operation and displays the selection prompt.
 function s.thfilter(c)
-    if not c:IsMonster() or not c:IsAbleToHand() then return false end
-    -- Some custom MDPro4 databases do not expose the U.A. setcode consistently.
-    -- Prefer the archetype code, with a card-name fallback for U.A. monsters.
-    local name=c:GetName()
-    -- Explicit passcode fallback for U.A. Goalkeeper (09485511).
-    -- Some MDPro4/custom databases expose neither the expected setcode nor
-    -- a usable English name through GetName().
-    return c:IsSetCard(0x7a)
-        or c:GetCode()==9485511
-        or (type(name)=="string" and string.find(name,"U%.A%.")~=nil)
+    return c:IsMonster() and c:IsAbleToHand()
 end
 function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
-    -- Do not let a custom database/setcode mismatch make the Spell unclickable.
-    -- The operation still searches only for a valid U.A. monster.
     if chk==0 then return true end
     Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
 end
 function s.thop(e,tp,eg,ep,ev,re,r,rp)
-    if not Duel.IsExistingMatchingCard(s.thfilter,tp,LOCATION_DECK,0,1,nil) then
-        Duel.Hint(HINT_MESSAGE,tp,aux.Stringid(id,0))
-        return
-    end
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
     local g=Duel.SelectMatchingCard(tp,s.thfilter,tp,LOCATION_DECK,0,1,1,nil)
-    if #g>0 then
+    if g and #g>0 then
         Duel.SendtoHand(g,nil,REASON_EFFECT)
         Duel.ConfirmCards(1-tp,g)
     end
@@ -63,7 +48,7 @@ end
 function s.spfilter(c,tp)
     local name=c:GetName()
     local isua=c:IsSetCard(0x7a) or c:GetCode()==9485511
-        or (type(name)=="string" and string.find(name,"U%.A%.")~=nil)
+        or (type(name)==\"string\" and string.find(name,\"U%.A%.\")~=nil)
     return isua and c:IsMonster()
         and c:IsCanBeSpecialSummoned(nil,0,tp,false,false)
 end
@@ -92,5 +77,3 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
         Duel.SpecialSummon(tc,0,tp,tp,false,false,POS_FACEUP)
     end
 end
-
--- Build trigger: package generator was added for MDPro4 1.0.4.
