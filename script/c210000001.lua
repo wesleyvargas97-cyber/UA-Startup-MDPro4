@@ -34,7 +34,12 @@ function s.thfilter(c)
     -- Some custom MDPro4 databases do not expose the U.A. setcode consistently.
     -- Prefer the archetype code, with a card-name fallback for U.A. monsters.
     local name=c:GetName()
-    return c:IsSetCard(0x7a) or string.find(name,"U%.A%.")~=nil
+    -- Explicit passcode fallback for U.A. Goalkeeper (09485511).
+    -- Some MDPro4/custom databases expose neither the expected setcode nor
+    -- a usable English name through GetName().
+    return c:IsSetCard(0x7a)
+        or c:GetCode()==9485511
+        or (type(name)=="string" and string.find(name,"U%.A%.")~=nil)
 end
 function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
     -- Do not let a custom database/setcode mismatch make the Spell unclickable.
@@ -56,7 +61,10 @@ function s.thop(e,tp,eg,ep,ev,re,r,rp)
 end
 
 function s.spfilter(c,tp)
-    return c:IsSetCard(0x7a) and c:IsMonster()
+    local name=c:GetName()
+    local isua=c:IsSetCard(0x7a) or c:GetCode()==9485511
+        or (type(name)=="string" and string.find(name,"U%.A%.")~=nil)
+    return isua and c:IsMonster()
         and c:IsCanBeSpecialSummoned(nil,0,tp,false,false)
 end
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
