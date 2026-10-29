@@ -30,7 +30,7 @@ function s.initial_effect(c)
 end
 
 function s.thfilter(c)
-    return c:IsSetCard(0xcd) and c:IsMonster() and c:IsAbleToHand()
+    return c:IsSetCard(0x7a) and c:IsMonster() and c:IsAbleToHand()
 end
 function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.IsExistingMatchingCard(s.thfilter,tp,LOCATION_DECK,0,1,nil) end
@@ -47,7 +47,7 @@ function s.thop(e,tp,eg,ep,ev,re,r,rp)
 end
 
 function s.spfilter(c,tp)
-    return c:IsSetCard(0xcd) and c:IsMonster()
+    return c:IsSetCard(0x7a) and c:IsMonster()
         and c:IsCanBeSpecialSummoned(nil,0,tp,false,false)
 end
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
