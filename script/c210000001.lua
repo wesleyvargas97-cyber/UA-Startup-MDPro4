@@ -75,3 +75,5 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
         Duel.SpecialSummon(tc,0,tp,tp,false,false,POS_FACEUP)
     end
 end
+
+-- Build trigger: package generator was added for MDPro4 1.0.4.
