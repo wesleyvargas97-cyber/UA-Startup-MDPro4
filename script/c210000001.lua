@@ -48,7 +48,7 @@ end
 function s.spfilter(c,tp)
     local name=c:GetName()
     local isua=c:IsSetCard(0x7a) or c:GetCode()==9485511
-        or (type(name)==\"string\" and string.find(name,\"U%.A%.\")~=nil)
+        or (type(name)=="string" and string.find(name,"U%.A%.")~=nil)
     return isua and c:IsMonster()
         and c:IsCanBeSpecialSummoned(nil,0,tp,false,false)
 end
