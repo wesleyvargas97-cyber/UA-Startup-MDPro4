@@ -25,9 +25,13 @@ function s.initial_effect(c)
     c:RegisterEffect(e2)
 end
 
--- Temporary test: any monster in the Deck can be selected.
+-- Search only "U.A." monsters. Use the archetype setcode and
+-- a name fallback for databases that do not expose the setcode correctly.
 function s.thfilter(c)
-    return c:IsType(TYPE_MONSTER) and c:IsAbleToHand()
+    if not c:IsType(TYPE_MONSTER) or not c:IsAbleToHand() then return false end
+    if c:IsSetCard(0x7a) then return true end
+    local name=c:GetName()
+    return type(name)=="string" and string.find(name,"U%.A%.")~=nil
 end
 function s.thop(e,tp,eg,ep,ev,re,r,rp)
     if not Duel.IsExistingMatchingCard(s.thfilter,tp,LOCATION_DECK,0,1,nil) then return end
