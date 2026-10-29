@@ -19,7 +19,7 @@ O segundo efeito é opcional e pode ser usado em cada evento válido de Invocaç
 
 ## Estado e limitações
 
-Este é um **protótipo**. O script e a integração ainda precisam ser testados no MDPro4/ocgcore. Os arquivos binários originais da base de cartas (`custom.cdb`, `test-release.cdb`) e a arte PNG não foram enviados nesta primeira publicação; portanto, este repositório ainda não é um pacote instalável completo.
+Este é um **protótipo experimental**. O pacote agora inclui `custom.cdb`, `test-release.cdb`, `corres_srv.ini` e arte PNG/JPG, mas ainda precisa ser validado no MDPro4 1.0.4.
 
 A arte prevista é provisória e original, não oficial de Yu-Gi-Oh!. O setcode usado no script é `0x7a`.
 
