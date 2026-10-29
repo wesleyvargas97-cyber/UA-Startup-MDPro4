@@ -31,9 +31,9 @@ CREATE TABLE texts (
 );
 """)
 card_id = 210000001
-# TYPE_SPELL=2, TYPE_NORMAL=0x40000. Setcode U.A.=0xcd.
+# TYPE_SPELL=2, TYPE_NORMAL=0x40000. Setcode U.A.=0x7a.
 con.execute("INSERT INTO datas VALUES (?,?,?,?,?,?,?,?,?,?,?)",
-            (card_id, 0, 0, 0xcd, 2 | 0x40000, 0, 0, 0, 0, 0, 0))
+            (card_id, 0, 0, 0x7a, 2 | 0x40000, 0, 0, 0, 0, 0, 0))
 desc = ("Add 1 \"U.A.\" monster from your Deck to your hand. "
         "You can only activate 1 \"U.A. Startup\" per turn. "
         "If your opponent Special Summons a monster(s): You can banish this card "
