@@ -1,6 +1,5 @@
 -- U.A. Startup
--- Temporary diagnostic build for MDPro4: verifies that the activation operation
--- runs and that the client can open a Deck selection window.
+-- Minimal MDPro4 compatibility test: no activation target callback.
 local s,id=GetID()
 function s.initial_effect(c)
     local e1=Effect.CreateEffect(c)
@@ -9,7 +8,6 @@ function s.initial_effect(c)
     e1:SetType(EFFECT_TYPE_ACTIVATE)
     e1:SetCode(EVENT_FREE_CHAIN)
     e1:SetCountLimit(1,id)
-    e1:SetTarget(s.thtg)
     e1:SetOperation(s.thop)
     c:RegisterEffect(e1)
 
@@ -27,19 +25,15 @@ function s.initial_effect(c)
     c:RegisterEffect(e2)
 end
 
--- DIAGNOSTIC ONLY: intentionally accepts any monster to isolate whether
--- MDPro4 runs the operation and displays the selection prompt.
+-- Temporary test: any monster in the Deck can be selected.
 function s.thfilter(c)
-    return c:IsMonster() and c:IsAbleToHand()
-end
-function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return true end
-    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
+    return c:IsType(TYPE_MONSTER) and c:IsAbleToHand()
 end
 function s.thop(e,tp,eg,ep,ev,re,r,rp)
+    if not Duel.IsExistingMatchingCard(s.thfilter,tp,LOCATION_DECK,0,1,nil) then return end
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
     local g=Duel.SelectMatchingCard(tp,s.thfilter,tp,LOCATION_DECK,0,1,1,nil)
-    if g and #g>0 then
+    if g:GetCount()>0 then
         Duel.SendtoHand(g,nil,REASON_EFFECT)
         Duel.ConfirmCards(1-tp,g)
     end
@@ -49,7 +43,7 @@ function s.spfilter(c,tp)
     local name=c:GetName()
     local isua=c:IsSetCard(0x7a) or c:GetCode()==9485511
         or (type(name)=="string" and string.find(name,"U%.A%.")~=nil)
-    return isua and c:IsMonster()
+    return isua and c:IsType(TYPE_MONSTER)
         and c:IsCanBeSpecialSummoned(nil,0,tp,false,false)
 end
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
@@ -61,7 +55,7 @@ function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
     Duel.Remove(c,POS_FACEUP,REASON_COST)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-    if chkc then return chkc:IsLocation(LOCATION_GRAVE) and chkc:IsControler(tp) and s.spfilter(chkc) end
+    if chkc then return chkc:IsLocation(LOCATION_GRAVE) and chkc:IsControler(tp) and s.spfilter(chkc,tp) end
     if chk==0 then
         return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
             and Duel.IsExistingTarget(s.spfilter,tp,LOCATION_GRAVE,0,1,nil,tp)
