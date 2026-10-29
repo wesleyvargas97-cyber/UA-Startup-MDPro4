@@ -47,7 +47,11 @@ con.commit()
 con.close()
 
 shutil.copy2(ROOT / "script" / "c210000001.lua", WORK / "script" / "c210000001.lua")
+# Some MDPro4 builds look for the fixed database filename test-release.cdb.
+shutil.copy2(db, WORK / "test-release.cdb")
 shutil.copy2(ROOT / "test-strings.conf", WORK / "test-strings.conf")
+# Keep pack metadata/config alongside the card database.
+(WORK / "corres_srv.ini").write_text("[Card]\\nid=210000001\\nname=U.A. Startup\\n", encoding="utf-8")
 shutil.copy2(ROOT / "pack" / "U.A. Startup Demo.ydk", WORK / "pack" / "U.A. Startup Demo.ydk")
 
 # Original placeholder artwork; visual rendering should still be checked in MDPro4.
@@ -62,6 +66,8 @@ d.text((32, 275), "U.A.", fill=(80, 220, 255))
 d.text((32, 315), "STARTUP", fill=(255, 255, 255))
 d.text((32, 565), "CUSTOM CARD • TEST ART", fill=(210, 230, 245))
 im.save(WORK / "pics" / "210000001.png")
+# JPEG fallback for clients/builds that resolve card art by .jpg.
+im.convert("RGB").save(WORK / "pics" / "210000001.jpg", quality=95)
 
 target = OUT / "UA_Startup.ypk"
 with zipfile.ZipFile(target, "w", zipfile.ZIP_DEFLATED) as z:
