@@ -51,7 +51,7 @@ shutil.copy2(ROOT / "script" / "c210000001.lua", WORK / "script" / "c210000001.l
 shutil.copy2(db, WORK / "test-release.cdb")
 shutil.copy2(ROOT / "test-strings.conf", WORK / "test-strings.conf")
 # Keep pack metadata/config alongside the card database.
-(WORK / "corres_srv.ini").write_text("[Card]\\nid=210000001\\nname=U.A. Startup\\n", encoding="utf-8")
+(WORK / "corres_srv.ini").write_text("[Card]\nid=210000001\nname=U.A. Startup\n", encoding="utf-8")
 shutil.copy2(ROOT / "pack" / "U.A. Startup Demo.ydk", WORK / "pack" / "U.A. Startup Demo.ydk")
 
 # Original placeholder artwork; visual rendering should still be checked in MDPro4.
