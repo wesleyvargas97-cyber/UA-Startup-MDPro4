@@ -32,5 +32,6 @@ jobs:
             echo "No generated pack changes."
           else
             git commit -m "Build U.A. Startup YPK package"
+            git pull --rebase origin main
             git push
           fi
