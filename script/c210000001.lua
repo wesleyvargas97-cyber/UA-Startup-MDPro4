@@ -30,7 +30,11 @@ function s.initial_effect(c)
 end
 
 function s.thfilter(c)
-    return c:IsSetCard(0x7a) and c:IsMonster() and c:IsAbleToHand()
+    if not c:IsMonster() or not c:IsAbleToHand() then return false end
+    -- Some custom MDPro4 databases do not expose the U.A. setcode consistently.
+    -- Prefer the archetype code, with a card-name fallback for U.A. monsters.
+    local name=c:GetName()
+    return c:IsSetCard(0x7a) or string.find(name,"U%.A%.")~=nil
 end
 function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
     -- Do not let a custom database/setcode mismatch make the Spell unclickable.
@@ -39,7 +43,10 @@ function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
     Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
 end
 function s.thop(e,tp,eg,ep,ev,re,r,rp)
-    if not Duel.IsExistingMatchingCard(s.thfilter,tp,LOCATION_DECK,0,1,nil) then return end
+    if not Duel.IsExistingMatchingCard(s.thfilter,tp,LOCATION_DECK,0,1,nil) then
+        Duel.Hint(HINT_MESSAGE,tp,aux.Stringid(id,0))
+        return
+    end
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
     local g=Duel.SelectMatchingCard(tp,s.thfilter,tp,LOCATION_DECK,0,1,1,nil)
     if #g>0 then
