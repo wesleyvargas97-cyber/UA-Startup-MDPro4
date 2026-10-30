@@ -29,7 +29,7 @@ end
 -- a name fallback for databases that do not expose the setcode correctly.
 function s.thfilter(c)
     if not c:IsType(TYPE_MONSTER) or not c:IsAbleToHand() then return false end
-    if c:IsSetCard(0x7a) then return true end
+    if c:IsSetCard(0xb2) then return true end
     local name=c:GetName()
     return type(name)=="string" and string.find(name,"U%.A%.")~=nil
 end
@@ -45,7 +45,7 @@ end
 
 function s.spfilter(c,tp)
     local name=c:GetName()
-    local isua=c:IsSetCard(0x7a) or c:GetCode()==9485511
+    local isua=c:IsSetCard(0xb2) or c:GetCode()==9485511
         or (type(name)=="string" and string.find(name,"U%.A%.")~=nil)
     return isua and c:IsType(TYPE_MONSTER)
         and c:IsCanBeSpecialSummoned(nil,0,tp,false,false)
