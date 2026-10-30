@@ -49,8 +49,8 @@ function s.spfilter(c)
     return isua and c:IsType(TYPE_MONSTER)
 end
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
-    -- Check the actual summoning player on the cards in the event group.
-    return eg:IsExists(Card.IsSummonPlayer,1,nil,1-tp)
+    -- For EVENT_SPSUMMON_SUCCESS, ep is the player who performed the summon.
+    return ep==1-tp
 end
 function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
