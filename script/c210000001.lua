@@ -45,7 +45,6 @@ function s.spfilter(c,e,tp)
     local isua=c:IsSetCard(0xb2) or c:GetCode()==9485511
         or (type(name)=="string" and string.find(name,"U%.A%.")~=nil)
     return isua and c:IsType(TYPE_MONSTER)
-        and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
 end
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
     return eg:IsExists(Card.IsSummonPlayer,1,nil,1-tp)
