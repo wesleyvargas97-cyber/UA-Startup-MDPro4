@@ -49,7 +49,9 @@ function s.spfilter(c,tp)
     return isua and c:IsType(TYPE_MONSTER)
 end
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
-    return ep==1-tp and eg:IsExists(Card.IsSummonType,1,nil,SUMMON_TYPE_SPECIAL)
+    -- EVENT_SPSUMMON_SUCCESS already guarantees a successful Special Summon.
+    -- Only check that the opponent was the player who performed it.
+    return ep~=tp
 end
 function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
