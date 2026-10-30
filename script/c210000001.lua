@@ -1,5 +1,5 @@
 -- U.A. Startup
--- Minimal MDPro4 compatibility test: no activation target callback.
+-- Keep the graveyard trigger condition that was confirmed to activate.
 local s,id=GetID()
 function s.initial_effect(c)
     local e1=Effect.CreateEffect(c)
@@ -24,8 +24,6 @@ function s.initial_effect(c)
     c:RegisterEffect(e2)
 end
 
--- Search only "U.A." monsters. Use the archetype setcode and
--- a name fallback for databases that do not expose the setcode correctly.
 function s.thfilter(c)
     if not c:IsType(TYPE_MONSTER) or not c:IsAbleToHand() then return false end
     if c:IsSetCard(0xb2) then return true end
@@ -42,14 +40,14 @@ function s.thop(e,tp,eg,ep,ev,re,r,rp)
     end
 end
 
-function s.spfilter(c)
+function s.spfilter(c,e,tp)
     local name=c:GetName()
     local isua=c:IsSetCard(0xb2) or c:GetCode()==9485511
         or (type(name)=="string" and string.find(name,"U%.A%.")~=nil)
     return isua and c:IsType(TYPE_MONSTER)
+        and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
 end
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
-    -- Check the actual summoning player on the cards in the event group.
     return eg:IsExists(Card.IsSummonPlayer,1,nil,1-tp)
 end
 function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
@@ -58,9 +56,10 @@ function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
     Duel.Remove(c,POS_FACEUP,REASON_COST)
 end
 function s.spop(e,tp,eg,ep,ev,re,r,rp)
-    if not Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_GRAVE,0,1,nil) then return end
+    if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
+    if not Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_GRAVE,0,1,nil,e,tp) then return end
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-    local g=Duel.SelectMatchingCard(tp,s.spfilter,tp,LOCATION_GRAVE,0,1,1,nil)
+    local g=Duel.SelectMatchingCard(tp,s.spfilter,tp,LOCATION_GRAVE,0,1,1,nil,e,tp)
     local tc=g:GetFirst()
     if tc then
         Duel.SpecialSummon(tc,0,tp,tp,false,false,POS_FACEUP)
