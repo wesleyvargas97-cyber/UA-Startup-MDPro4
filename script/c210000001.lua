@@ -51,9 +51,9 @@ function s.spfilter(c,e,tp)
         and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
 end
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
-    -- Check the actual player who summoned each card in the event group.
-    -- rp/ep are not reliable substitutes for the summon player here.
-    return eg:IsExists(Card.IsSummonPlayer,1,nil,1-tp)
+    -- For EVENT_SPSUMMON_SUCCESS, ep is the player who performed
+    -- the Special Summon. Only respond to the opponent's summons.
+    return ep==1-tp
 end
 function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
     local c=e:GetHandler()
